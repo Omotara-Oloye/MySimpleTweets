@@ -78,6 +78,7 @@
         android:layout_marginStart="75dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imageButton2"
+        app:layout_constraintTop_toBottomOf="@+id/ivMedia"
         app:srcCompat="@drawable/ic_vector_messages_stroke" />
 
     <ImageButton
@@ -87,6 +88,7 @@
         android:layout_marginStart="75dp"
         app:layout_constraintStart_toEndOf="@+id/imageButton"
         app:layout_constraintTop_toTopOf="@+id/imageButton3"
+        app:layout_constraintTop_toBottomOf="@+id/ivMedia"
         app:srcCompat="@drawable/ic_vector_retweet_stroke" />
 
     <ImageButton
@@ -95,6 +97,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="75dp"
         app:layout_constraintStart_toEndOf="@+id/imageButton2"
-        app:layout_constraintTop_toBottomOf="@+id/tvTweet"
+        app:layout_constraintTop_toBottomOf="@+id/ivMedia"
         app:srcCompat="@drawable/ic_vector_heart_stroke" />
 </android.support.constraint.ConstraintLayout>
