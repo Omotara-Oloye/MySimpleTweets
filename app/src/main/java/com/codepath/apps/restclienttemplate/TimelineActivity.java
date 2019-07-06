@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -31,6 +32,9 @@ public class TimelineActivity extends AppCompatActivity {
     RecyclerView rvTweets;
     private SwipeRefreshLayout swipeContainer;
     MenuItem miActionProgressItem;
+    public String username;
+    public String name;
+    public String profilePic;
 
 
     @Override
@@ -77,6 +81,7 @@ public class TimelineActivity extends AppCompatActivity {
 
         //set the adapter
         rvTweets.setAdapter(tweetAdapter);
+        getUserInfo();
         populateTimeline();
 
     }
@@ -111,9 +116,12 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
 
-    public void composeTweet(MenuItem item) {
+    public void composeTweet(View item) {
         // first parameter is the context, second is the class of the activity to launch
         Intent i = new Intent(this, ComposeActivity.class);
+        i.putExtra("ivProfilepic", profilePic);
+        i.putExtra("tvUsername", username);
+        i.putExtra("tvName", name);
         startActivityForResult(i, 20); // brings up the second activity
     }
     @Override
@@ -141,7 +149,7 @@ public class TimelineActivity extends AppCompatActivity {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-               // Log.d("TwitterClient", response.toString());
+                // Log.d("TwitterClient", response.toString());
 
                 //iterate through the JsonArray
                 //for each entry, desearlize the JSON object
@@ -181,6 +189,38 @@ public class TimelineActivity extends AppCompatActivity {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Log.d("TwitterClient", errorResponse.toString());
                 throwable.printStackTrace();
+            }
+        });
+    }
+    private void getUserInfo(){
+        client.getUser(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                    try {
+                        username = response.getString("screen_name");
+                        name = response.getString("name");
+                        profilePic = response.getString("profile_image_url_https");
+                    } catch(JSONException error){
+                        error.printStackTrace();
+                    }
+            }
+
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.d("TwitterClient", responseString);
+                throwable.printStackTrace();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d("TwitterClient", errorResponse.toString());
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                Log.d("TwitterClient", errorResponse.toString());
             }
         });
     }

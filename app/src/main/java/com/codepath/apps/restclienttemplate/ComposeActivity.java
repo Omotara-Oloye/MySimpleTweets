@@ -8,9 +8,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONException;
@@ -21,26 +24,58 @@ import cz.msebera.android.httpclient.Header;
 
 public class ComposeActivity extends AppCompatActivity {
 
-    Button button;
+    Button sendTweet;
+    Button cancel;
     TwiiterClient client;
     EditText draftTweet;
-    TextView tweetCount;
+    TextView tvUsername;
+    TextView tvName;
+    ImageView ivProfilePic;
+    public String username;
+    public String name;
+    public String profilePic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compose);
-        button = findViewById(R.id.sendTweet);
+        sendTweet = findViewById(R.id.sendTweet);
+        cancel = findViewById(R.id.cancel);
         client = TwitterApp.getRestClient(this);
         draftTweet = findViewById(R.id.draftTweet);
+
+        // connect views to variables
+        tvUsername = (TextView) findViewById(R.id.tvUsername);
+        tvName = (TextView) findViewById(R.id.tvName);
+        ivProfilePic = (ImageView) findViewById(R.id.ivProfilePic);
+
+        username = getIntent().getStringExtra("tvUsername");
+        name = getIntent().getStringExtra("tvName");
+        profilePic = getIntent().getStringExtra("ivProfilepic");
+
+
+        tvUsername.setText("@" + username);
+        tvName.setText(name);
+        Glide.with(ComposeActivity.this).load(profilePic)
+                .apply(RequestOptions.circleCropTransform())
+                .into(ivProfilePic);
+
+
 
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.twitter_blue)));
 
 
-        button.setOnClickListener(new View.OnClickListener() {
+        sendTweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onSubmit(v);
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // closes the activity and returns to first screen
+                finish();
             }
         });
     }
@@ -60,6 +95,7 @@ public class ComposeActivity extends AppCompatActivity {
                             Intent i = new Intent();
                             i.putExtra("tweet", Parcels.wrap(tweet));
                             setResult(RESULT_OK, i);
+                            // closes the activity and returns to first screen
                             finish();
                         } catch (JSONException error) {
                             error.printStackTrace();
@@ -73,8 +109,8 @@ public class ComposeActivity extends AppCompatActivity {
                     }
                 });
             }
-        // closes the activity and returns to first screen
     }
+
 
 
 

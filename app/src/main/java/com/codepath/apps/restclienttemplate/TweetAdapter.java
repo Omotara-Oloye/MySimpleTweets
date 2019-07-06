@@ -65,15 +65,28 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         //get data according to position
         Tweet tweet = mTweets.get(position);
+        if(tweet.mediaURL != null){
+            viewHolder.tvUsername.setText(tweet.user.name);
+            viewHolder.tvTweet.setText(tweet.body);
+            viewHolder.tvName.setText("@" + tweet.user.screenName);
+            viewHolder.tvTime.setText(" • " + getRelativeTimeAgo(tweet.createdAt));
+            Glide.with(context).load(tweet.mediaURL + "?format=jpg&name=small").into(viewHolder.ivMedia);
+        }
+        else{
+            viewHolder.ivMedia.setVisibility(View.INVISIBLE);
+            viewHolder.tvUsername.setText(tweet.user.name);
+            viewHolder.tvTweet.setText(tweet.body);
+            viewHolder.tvName.setText("@" + tweet.user.screenName);
+            viewHolder.tvTime.setText(" • " + getRelativeTimeAgo(tweet.createdAt));
+            Glide.with(context).load(tweet.user.profileImageUrl)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(viewHolder.ivProfilePic);
+        }
 
 
         //populate the views according to this data
 
-        viewHolder.tvUsername.setText(tweet.user.name);
-        viewHolder.tvTweet.setText(tweet.body);
-        viewHolder.tvName.setText("@" + tweet.user.screenName);
-        viewHolder.tvTime.setText(" • " + getRelativeTimeAgo(tweet.createdAt));
-        Glide.with(context).load(tweet.user.profileImageUrl).apply(RequestOptions.circleCropTransform()).into(viewHolder.ivProfilePic);
+
     }
 
     @Override
@@ -90,6 +103,8 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
         public TextView tvTweet;
         public TextView tvName;
         public TextView tvTime;
+        public ImageView ivMedia;
+
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -101,6 +116,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder>{
             tvName = (TextView) itemView.findViewById(R.id.tvName);
             tvTweet = (TextView) itemView.findViewById(R.id.tvTweet);
             tvTime = (TextView) itemView.findViewById(R.id.tvCreated_At);
+            ivMedia = (ImageView) itemView.findViewById(R.id.ivMedia);
 
         }
 
